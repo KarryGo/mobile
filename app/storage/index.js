@@ -2,9 +2,10 @@ import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const store = {
-  get: async () => {
+  get: async key => {
     const value = await AsyncStorage.getItem(AppStorageName);
-    return value ? JSON.parse(value) : {};
+    const storeValue = value ? JSON.parse(value) : {};
+    return key ? storeValue[key] : value;
   },
   set: async (key, value) => {
     const oldValue = await store.getState();

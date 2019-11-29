@@ -8,8 +8,8 @@ const useAuth = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const store = await storage.get();
-      setUser(store.user);
+      const savedUser = await storage.get('user');
+      setUser(savedUser);
       setLoading(false);
     };
     getUser();

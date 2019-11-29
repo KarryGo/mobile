@@ -9,10 +9,13 @@ import {
   Label,
   Button,
 } from 'native-base';
+import Config from 'react-native-config';
 import isEmpty from 'lodash.isempty';
 import {StyleSheet} from 'react-native';
 
 const Register = ({navigation}) => {
+  const [isRegistering, setRegistering] = useState(false);
+  const [errorRegistering, setErrorRegistering] = useState(null);
   const [userDetails, onChangeUserDetails] = useState({
     businessName: '',
     email: '',
@@ -42,12 +45,22 @@ const Register = ({navigation}) => {
     return isEmpty(errors);
   };
 
-  const register = () => {
+  const register = async () => {
     if (!validate()) {
       return;
     }
 
-    return 'hello';
+    setRegistering(true);
+    try {
+      await fetch(`${Config.API_URL}/signup`, {
+        method: 'POST',
+      });
+      setRegistering(false);
+      navigation.navigate('Home');
+    } catch (error) {
+      setRegistering(false);
+      setErrorRegistering(error);
+    }
   };
   const onUpdateUser = field => value => {
     setUserDetailsError({...userDetailsError, [field]: false});

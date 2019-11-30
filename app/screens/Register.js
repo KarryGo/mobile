@@ -8,14 +8,15 @@ import {
   Input,
   Label,
   Button,
+  Toast,
+  View,
 } from 'native-base';
 import Config from 'react-native-config';
 import isEmpty from 'lodash.isempty';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
 
 const Register = ({navigation}) => {
   const [isRegistering, setRegistering] = useState(false);
-  const [errorRegistering, setErrorRegistering] = useState(null);
   const [userDetails, onChangeUserDetails] = useState({
     businessName: '',
     email: '',
@@ -59,7 +60,11 @@ const Register = ({navigation}) => {
       navigation.navigate('Home');
     } catch (error) {
       setRegistering(false);
-      setErrorRegistering(error);
+      Toast.show({
+        text: 'Oops! Something happened when registering.',
+        buttonText: 'Try Again',
+        type: 'danger',
+      });
     }
   };
   const onUpdateUser = field => value => {
@@ -68,9 +73,15 @@ const Register = ({navigation}) => {
   };
   return (
     <Container>
-      <Content padder>
+      <Content
+        scrollEnabled={false}
+        padder
+        contentContainerStyle={styles.content}>
         <Form>
-          <Item floatingLabel error={userDetailsError.businessName}>
+          <Item
+            style={styles.item}
+            floatingLabel
+            error={userDetailsError.businessName}>
             <Label>Business name</Label>
             <Input
               textContentType="organizationName"
@@ -78,7 +89,10 @@ const Register = ({navigation}) => {
               value={userDetails.businessName}
             />
           </Item>
-          <Item floatingLabel error={userDetailsError.email}>
+          <Item
+            style={styles.item}
+            floatingLabel
+            error={userDetailsError.email}>
             <Label>Email address</Label>
             <Input
               textContentType="emailAddress"
@@ -86,7 +100,10 @@ const Register = ({navigation}) => {
               value={userDetails.email}
             />
           </Item>
-          <Item floatingLabel error={userDetailsError.password}>
+          <Item
+            style={styles.item}
+            floatingLabel
+            error={userDetailsError.password}>
             <Label>Password</Label>
             <Input
               secureTextEntry
@@ -95,7 +112,10 @@ const Register = ({navigation}) => {
               value={userDetails.password}
             />
           </Item>
-          <Item floatingLabel error={userDetailsError.confirmPassword}>
+          <Item
+            style={styles.item}
+            floatingLabel
+            error={userDetailsError.confirmPassword}>
             <Label>Confirm password</Label>
             <Input
               textContentType="password"
@@ -105,20 +125,23 @@ const Register = ({navigation}) => {
             />
           </Item>
           <Button
+            disabled={isRegistering}
             onPress={register}
             block
             primary
             style={styles.registerButton}>
-            <Text>Sign up</Text>
+            {isRegistering ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text>Sign up</Text>
+            )}
           </Button>
-          <Button
-            onPress={() => navigation.replace('Login')}
-            block
-            bordered
-            info
-            style={styles.registerButton}>
-            <Text>Login</Text>
-          </Button>
+          <View style={styles.info}>
+            <Text>Already have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.replace('Login')}>
+              <Text style={styles.infoButton}>Log in</Text>
+            </TouchableOpacity>
+          </View>
         </Form>
       </Content>
     </Container>
@@ -128,6 +151,23 @@ const Register = ({navigation}) => {
 const styles = StyleSheet.create({
   registerButton: {
     marginTop: 30,
+  },
+  content: {
+    justifyContent: 'center',
+    flex: 1,
+  },
+  item: {
+    marginLeft: 0,
+  },
+  info: {
+    marginTop: 30,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  infoButton: {
+    color: '#007aff',
+    textDecorationLine: 'underline',
   },
 });
 
